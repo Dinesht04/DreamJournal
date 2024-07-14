@@ -1,6 +1,5 @@
 import Ripple from "@/components/magicui/ripple";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
-import { LampContainer, } from "@/components/ui/lamp";
 import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { SparklesCore } from "@/components/ui/sparkles";
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CoolMode } from "@/components/magicui/cool-mode";
 import { Boxes } from "@/components/ui/background-boxes";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default function Home() {
 
@@ -137,9 +137,9 @@ export default function Home() {
         <TypewriterEffectSmooth words={words} />
         
         <CoolMode>
-        <Button className="w-40 h-10 rounded-xl bg-purple-600 hover:bg-purple-800  border dark:border-white border-transparent text-white text-sm">
+      <Link href="/getStarted">  <Button className="w-40 h-10 rounded-xl bg-purple-600 hover:bg-purple-800  border dark:border-white border-transparent text-white text-sm">
           Join now
-        </Button>
+        </Button></Link>
       </CoolMode>
       </h1>
             
