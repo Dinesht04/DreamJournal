@@ -17,19 +17,20 @@ interface Data{
 export interface ID{
     uuid:string|undefined
     date:Date|undefined
+    displayName:string|null|undefined
 }
 
 const page = () => {
-    const [date, setDate] = React.useState<Date | undefined>(new Date())
+    const [date, setDate] = React.useState<Date|undefined>(new Date())
     const Router = useRouter();
 
-
+    
 
     //auth
     const user = auth.currentUser;
-    console.log(date)
+    
     const uuid:string|undefined = user?.uid;
-
+    
     if(user){
         if(user.displayName==null){
             console.log("func changed")
@@ -68,7 +69,7 @@ const page = () => {
             Router.push('/getStarted')
             }} > Log Out </Button>
         </div>
-        <div id='container' className='flex justify-center align-center m-4 p-4'>
+        <div id='container' className='flex flex-col md:flex-row justify-center align-center m-4 p-4'>
             <div id='calender' className='align-left m-4 p-4 basis-1/3'>
             <Calendar
                 mode="single"
@@ -78,7 +79,7 @@ const page = () => {
             />
             </div>
             <div id='content' className='flex flex-col m-4 p-4 basis-2/3'>
-                <ContentTabs date={date} uuid={uuid} />
+                <ContentTabs date={date} uuid={uuid} displayName={user?.displayName} />
                 
             </div>
         </div>

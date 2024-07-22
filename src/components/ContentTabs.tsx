@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { CoolMode } from './magicui/cool-mode'
 import { Label } from "@/components/ui/label"
 import {
   Tabs,
@@ -19,8 +19,12 @@ import {
 import { Textarea } from "./ui/textarea"
 import { ID } from "@/app/dashboard/page"
 import {db} from '@/app/firebase/config'
-import { addDoc,collection, query, where, getDocs } from "firebase/firestore"
-import { IconReload } from '@tabler/icons-react'
+import { addDoc,collection, query,orderBy, where, getDocs, Timestamp } from "firebase/firestore"
+import { useToast } from './ui/use-toast'
+import { useRouter } from 'next/navigation'
+import Groq from "groq-sdk";
+
+
 
 
 export default function ContentTabs(props:ID) {
@@ -36,17 +40,28 @@ export default function ContentTabs(props:ID) {
     const [heading,setHeading] = React.useState<string>();
     const [body,setBody] = React.useState<string>();
     const [journals,setJournals] = React.useState<journal[]>([]);
+    const [ananlysis,setAnanlysis] = React.useState<string>();
 
-    const handleHeading = (event:React.ChangeEvent<HTMLInputElement>) => {
+    const {toast} = useToast();
+    const Router = useRouter();
+
+    const handleHeading = (event:React.ChangeEvent<HTMLTextAreaElement>) => {
         setHeading(event.target.value);
     }
     const handleBody = (event:React.ChangeEvent<HTMLTextAreaElement>) => {
         setBody(event.target.value);
     }
-
+    
     //Submit
-    const handleSubmit = async ()=>{
+    const handleSub = async ()=>{
     try {
+
+      if(props.uuid == undefined){
+        return toast({
+          title: "Error",
+          description: "Please Select Date Again",            
+           })
+      }
         const Data :{
             date:Date|undefined,
             body:string|undefined|null,
@@ -60,18 +75,46 @@ export default function ContentTabs(props:ID) {
         }
         const docRef = await addDoc(collection(db, "journals"), Data);
         console.log("Document written with ID: ", docRef.id);
+        toast({
+          title: "Success",
+          description: "Journal Added Successfully",            
+           })
         setBody("");
         setHeading("");
       } catch (e) {
         console.error("Error adding document: ", e);
       }
   }
-
  
+  React.useEffect(()=>{
+      getJournal();
+  },[props.date])
 
   const getJournal = async() =>{
-    console.log(props.date)
-    const q = query(collection(db, "journals"),where("date", "==", props.date),where("userID","==",props.uuid));
+    console.log("userID",props.uuid)
+    
+    if(props.date == undefined){
+      return toast({
+        title: "Error",
+        description: "Invalid Date",            
+         })
+    }
+
+    if(props.uuid == undefined){
+      return toast({
+        title: "Error",
+        description: "Please Select Date Again",            
+         })
+    }
+    
+    
+    if(!props.uuid){
+      Router.push('/getStarted')
+    }
+
+    const date = Timestamp.fromDate(new Date(props.date)) 
+
+    const q = query(collection(db, "journals"),where("date", "==", date),where("userID","==",props.uuid),orderBy("date","desc"));
     try{
         const querySnapshot = await getDocs(q);
         const newJournals:journal[] = [];
@@ -81,42 +124,63 @@ export default function ContentTabs(props:ID) {
         });
         // Update the state with the new journals
         setJournals(newJournals);
-        console.log(journals);
-            }
+      
+      }
     catch(e){
         console.log("error",e)
     }
-}
-    
-  
+  }
+    //ai
+    const groq = new Groq({ apiKey: process.env.NEXT_PUBLIC_GROQ_API_KEY,dangerouslyAllowBrowser: true });
+
+    async function getGroqChatCompletion(title:string, body:string) {
+      return groq.chat.completions.create({
+        messages: [
+          {
+            role: "user",
+            content: `Please analyse the following dream in 2 paragraphs: title:${title} body:${body}`,
+          },
+        ],
+        model: "llama3-8b-8192",
+      });
+    }
+
+    async function chat(title:string,body:string) {
+      const chatCompletion = await getGroqChatCompletion(title,body);
+      // Print the completion returned by the LLM.
+      setAnanlysis(chatCompletion.choices[0]?.message?.content || "Can't analyse right now UWU")
+      
+    }
+
+
     
 
   return (
     <Tabs className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="write">Write</TabsTrigger>
-        <TabsTrigger onClick={getJournal} value="read">Read</TabsTrigger>
+        <TabsTrigger className='' value="write">Write</TabsTrigger>
+        <TabsTrigger className='' onClick={getJournal} value="read">Read</TabsTrigger>
       </TabsList>
       <TabsContent value="write">
         <Card className="max-w-full">
           <CardHeader>
             <CardTitle>Write a Journal</CardTitle>
             <CardDescription>
-              Type whatever's on your mind. Click save when you're done.{props.uuid}
+             Hey {props.displayName}, Type whatever's on your mind. Click Done when you're done. 
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-1">
-              <Label htmlFor="name">Title</Label>
-              <Input id="name" value={heading} onChange={handleHeading} placeholder="Enter Title Here..."  className="w-4/12" />
+              <Label htmlFor="title">Title</Label>
+              <Textarea value={heading} onChange={handleHeading} placeholder="Enter Title Here..."  className="w-3/4 md:w-4/12" />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="username">Body</Label>
+              <Label htmlFor="body">Body</Label>
               <Textarea value={body} onChange={handleBody} placeholder="Journal Here..." />
             </div>
           </CardContent>
           <CardFooter>
-            <Button onClick={handleSubmit}>Done</Button>
+            <Button onClick={handleSub}>Done</Button>
           </CardFooter>
         </Card>
       </TabsContent>
@@ -138,11 +202,18 @@ export default function ContentTabs(props:ID) {
                   {journal.title}
                   </CardTitle>
                 <CardDescription>
-                    <p>{journal.body}</p>
+                    {journal.body}
                 </CardDescription>
                
                 <CardFooter className='flex flex-row-reverse'>
-                    <Button>Analyse</Button>
+                    
+                    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+                        <CardDescription className='mb-4'>
+                          {ananlysis}
+                          </CardDescription>  
+                          {!ananlysis?<Button onClick={()=>chat(journal.title,journal.body)} >Analyse</Button>:<CoolMode><Button > UWU </Button></CoolMode> }
+                        
+                    </div>
                 </CardFooter>
                 </CardHeader>
             </Card>

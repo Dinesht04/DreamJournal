@@ -19,10 +19,12 @@ import {
     TabsTrigger,
   } from "@/components/ui/tabs"
 import { useToast } from '@/components/ui/use-toast'
-import {auth} from '../firebase/config'
+import {auth,googleProvider} from '../firebase/config'
 import { useRouter } from 'next/navigation'
-import { signInWithEmailAndPassword,createUserWithEmailAndPassword,setPersistence,browserLocalPersistence} from 'firebase/auth'
+import { signInWithEmailAndPassword,createUserWithEmailAndPassword,setPersistence,browserLocalPersistence,signInWithPopup,GoogleAuthProvider } from 'firebase/auth'
 import { PasswordInput } from '@/components/ui/PasswordInput'
+import { Separator } from '@/components/ui/separator'
+import { IconBrandGoogle } from '@tabler/icons-react'
 
 
 const page = () => {
@@ -30,9 +32,10 @@ const page = () => {
 
     const [email,setEmail] = React.useState<string|null>();
     const [password,setPassword] = React.useState<string|null>();
-    const [showPassword,setShowPassword] = React.useState<boolean>(false);
+    
     // const [error,setError] = React.useState<string|null>();
     // const [errorMessage,setErrorMessage] = React.useState<string|null>();
+
     const { toast } = useToast();    
 
     const Router = useRouter();
@@ -79,6 +82,35 @@ const page = () => {
         }
     };
 
+    //POP-UP SignIN
+    const handleGoogle = async():Promise<Data> =>{
+        try{
+            const result = await signInWithPopup(auth,googleProvider);
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const user = result.user;
+            const data: Data = {
+                title: "Success",
+                message: "Signed In Successfully",
+            };
+            return data;
+        }
+        catch(error:any){
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.customData.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            const data: Data = {
+                title: "Success",
+                message: "Signed In Successfully",
+            };
+            return data;
+        }
+    }
+
+    
+
     const handleSignup = async (): Promise<Data> => {
         if (email && password) {
             try {
@@ -107,11 +139,14 @@ const page = () => {
         }
     };
     
-    const user = auth.currentUser;
-    console.log(user);
-    if(user){
-        Router.push('/dashboard')
+    function Route() {
+        const user = auth.currentUser;
+        console.log(user);
+        if(user){
+            Router.push('/dashboard')
+        }
     }
+    
 
   return (
     <div className='flex items-center justify-center h-screen'>
@@ -132,24 +167,35 @@ const page = () => {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" onChange={handleEmailChange} placeholder='flyingjatt@gmail.com'  />
+              <Input id="email" onChange={handleEmailChange} placeholder='Enter Email Here...'  />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="password">Password</Label>
-              <PasswordInput id="password"  type="password" onChange={handlePasswordChange} placeholder='Enter your Password'  />
+              <Label>Password</Label>
+              <PasswordInput id="password"  onChange={handlePasswordChange} placeholder='Enter your Password'  />
             </div>
           </CardContent>
-          <CardFooter>
-            <Button onClick={ async()=>{
+          <CardFooter className='flex flex-col'>
+            <Button className='mb-4' onClick={ async()=>{
                     const Data:Data = await handleLogin();
                     toast({
                     title: Data.title,
                     description: Data.message,            
                      })
-                    Router.push('/dashboard')
+                    Route();
                     }}
                       >Sign In
                       </Button>
+                    <Separator/>
+                    <Button className='m-4' variant="ghost" 
+                        onClick={async()=>{
+                            const Data:Data = await handleGoogle();
+                            toast({
+                            title: Data.title,
+                            description: Data.message,            
+                             })
+                            Route();
+                            }}
+                    >Sign-in With Google<IconBrandGoogle/></Button>
           </CardFooter>
         </Card>
         </TabsContent>
@@ -164,23 +210,25 @@ const page = () => {
             <CardContent className="space-y-2">
                 <div className="space-y-1">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" onChange={handleEmailChange} placeholder='tylerdurden@gmail.com' type="email" />
+                <Input id="email" onChange={handleEmailChange} placeholder='Enter Email Here...' type="email" />
                 </div>
                 <div className="space-y-1">
-                <Label htmlFor="password">Password</Label>
-                <PasswordInput id="password"  type="password" onChange={handlePasswordChange} placeholder='Enter your Password'  />
+                <Label >Password</Label>
+                <PasswordInput id="password"   onChange={handlePasswordChange} placeholder='Enter your Password'  />
                 </div>
             </CardContent>
-            <CardFooter>
-                <Button onClick={async()=>{
-               
+            <CardFooter className='flex flex-col'>
+                <Button className='mb-4' onClick={async()=>{
                     const Data:Data = await handleSignup();
                     toast({
                         title: Data.title,
                         description: Data.message,            
-                         })}}
-                 
+                         })
+                        Route();
+                        }}
                    >Sign Up</Button>
+                   <Separator/>
+                   <Button className='m-4' variant="ghost">Sign-Up With Google<IconBrandGoogle/></Button>
             </CardFooter>
             </Card>
         </TabsContent>

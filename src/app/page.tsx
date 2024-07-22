@@ -1,6 +1,6 @@
 import Ripple from "@/components/magicui/ripple";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
-import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
+import { IconBrandGithubFilled, IconBrandTwitterFilled, IconHome, IconMessage, IconUser } from "@tabler/icons-react";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { SparklesCore } from "@/components/ui/sparkles";
 import { StickyScroll } from "@/components/ui/sticky-scroll-reveal";
@@ -13,44 +13,46 @@ import Link from "next/link";
 
 export default function Home() {
 
+  const foot = "<DKT/>";
+
   const content = [
     {
-      title: "Collaborative Editing",
+      title: "Unlock Your Inner World",
       description:
-        "Work together in real time with your team, clients, and stakeholders. Collaborate on documents, share ideas, and make decisions quickly. With our platform, you can streamline your workflow and increase productivity.",
+        "Write your way to clarity and self-discovery.  This journaling and dream analysis website helps you explore your thoughts, feelings, and subconscious mind.  Track your moods, set goals, and gain valuable insights from your nightly adventures.  Sign up for your free trial today and unlock the power within!",
       content: (
         <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))] flex items-center justify-center text-white">
-          Collaborative Editing
+          Unlock Your Inner World
         </div>
       ),
     },
     {
-      title: "Real time changes",
+      title: "Pen to Purpose",
       description:
-        "See changes as they happen. With our platform, you can track every modification in real time. No more confusion about the latest version of your project. Say goodbye to the chaos of version control and embrace the simplicity of real-time updates.",
+        "Journaling isn't just about reflection - it's a powerful tool for growth.  Set intentions, track progress, and overcome challenges.  This platform allows you to combine journaling with goal setting and action planning.  Transform your everyday scribbles into a roadmap for a fulfilling life!",
       content: (
         <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))] flex items-center justify-center text-white">
-            IDK man some shit about editing
+           Pen to Purpose
         </div>
       ),
     },
     {
-      title: "Version control",
+      title: "Mind & Soul Synergy",
       description:
-        "Experience real-time updates and never stress about version control again. Our platform ensures that you're always working on the most recent version of your project, eliminating the need for constant manual updates. Stay in the loop, keep your team aligned, and maintain the flow of your work without any interruptions.",
+        "Looking for a holistic approach to self-care?  Our website combines the benefits of journaling and dream analysis for a truly integrated experience.  Explore your inner world, cultivate self-awareness, and create a more balanced and fulfilling life.  Join our community of mindful individuals and embark on a journey of self-discovery!",
       content: (
         <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--orange-500),var(--yellow-500))] flex items-center justify-center text-white">
-          Version control
+          Mind & Soul Synergy
         </div>
       ),
     },
     {
-      title: "Running out of content",
+      title: "It's Easier Than You Think!",
       description:
-        "Experience real-time updates and never stress about version control again. Our platform ensures that you're always working on the most recent version of your project, eliminating the need for constant manual updates. Stay in the loop, keep your team aligned, and maintain the flow of your work without any interruptions.",
+        "Ever woken up from a dream feeling confused or curious?  Our dream analysis tool helps you decipher the hidden messages your subconscious is sending.  Record your dreams, explore symbol meanings, and gain a deeper understanding of yourself. Unravel the mysteries of your sleep with our user-friendly dream dictionary!",
       content: (
         <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))] flex items-center justify-center text-white">
-          Running out of content
+         It's Easier Than You Think!
         </div>
       ),
     },
@@ -64,12 +66,12 @@ export default function Home() {
     },
     {
       name: "About",
-      link: "/about",
+      link: "#hero",
       icon: <IconUser className="h-4 w-4 text-neutral-500 dark:text-white" />,
     },
     {
       name: "Contact",
-      link: "/contact",
+      link: "#footer",
       icon: (
         <IconMessage className="h-4 w-4 text-neutral-500 dark:text-white" />
       ),
@@ -173,11 +175,14 @@ export default function Home() {
     
           <Boxes />
           <h1 className={cn("md:text-4xl text-xl text-white relative z-20")}>
-            Footer
+            Made with love
           </h1>
-          <p className="text-center mt-2 text-neutral-300 relative z-20">
-            Enter Footer later
-          </p>
+          <div className="">
+            
+            <Link href={'https://x.com/Dinesht_04'} ><p className="text-center mt-2 m-4 text-neutral-300 relative z-20"> {foot} </p></Link>
+           
+          </div>
+          
         </div>
       </div>
     </div>
