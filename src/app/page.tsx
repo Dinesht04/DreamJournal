@@ -52,7 +52,7 @@ export default function Home() {
         "Ever woken up from a dream feeling confused or curious?  Our dream analysis tool helps you decipher the hidden messages your subconscious is sending.  Record your dreams, explore symbol meanings, and gain a deeper understanding of yourself. Unravel the mysteries of your sleep with our user-friendly dream dictionary!",
       content: (
         <div className="h-full w-full bg-[linear-gradient(to_bottom_right,var(--cyan-500),var(--emerald-500))] flex items-center justify-center text-white">
-         It's Easier Than You Think!
+         It&apos;s Easier Than You Think!
         </div>
       ),
     },

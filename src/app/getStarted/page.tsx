@@ -27,7 +27,7 @@ import { Separator } from '@/components/ui/separator'
 import { IconBrandGoogle } from '@tabler/icons-react'
 
 
-const page = () => {
+const Page = () => {
 
 
     const [email,setEmail] = React.useState<string|null>();
@@ -238,4 +238,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

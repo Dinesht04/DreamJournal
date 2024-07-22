@@ -166,7 +166,7 @@ export default function ContentTabs(props:ID) {
           <CardHeader>
             <CardTitle>Write a Journal</CardTitle>
             <CardDescription>
-             Hey {props.displayName}, Type whatever's on your mind. Click Done when you're done. 
+             Hey {props.displayName}, Type whatever&apos;s on your mind. Click Done when you&apos;re done. 
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">

@@ -20,7 +20,7 @@ export interface ID{
     displayName:string|null|undefined
 }
 
-const page = () => {
+const Page = () => {
     const [date, setDate] = React.useState<Date|undefined>(new Date())
     const Router = useRouter();
 
@@ -91,4 +91,4 @@ const page = () => {
 
 }
 
-export default page
+export default Page
